@@ -7,7 +7,7 @@ const path=require('path');
 const ejs=require('ejs');
 const flash=require('connect-flash');
 const expressValidator=require('express-validator');
-
+const authCheck=require('./config/authent');
 const app=express();
 
 var user=require('./routes/auth.js');
@@ -51,6 +51,7 @@ app.use(passport.session());
   res.locals.session=req.user;
   next();
 })*/
+app.use('/home',authCheck);
 app.use('/',user);
 
 app.listen(8000,() => console.log('Server is Connected'));

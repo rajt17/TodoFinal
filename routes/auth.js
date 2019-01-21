@@ -7,17 +7,11 @@ const Task=require('../model/task');
 const Label=require('../model/label');
 const checkPassword=require('../config/compare');
 const upload=require('../config/multer');
+const authCheck=require('../config/authent');
 
-const authCheck = (req, res, next) => {
-    if(!req.user){
-        res.redirect('/');
-    } else {
-        next();
-    }
-};
 router.get('/',(req,res)=> res.render('login'));
 
-router.get('/home',authCheck,(req,res)=>res.render('alltasks'));
+router.get('/home',(req,res)=>res.render('alltasks'));
 
 router.post('/login',(req,res,next)=>{
     passport.authenticate('local',{
@@ -26,10 +20,10 @@ router.post('/login',(req,res,next)=>{
     failureFlash:true
     })(req,res,next);
 });
-router.post('/home/getUser',authCheck,(req,res)=>{
+router.post('/home/getUser',(req,res)=>{
     res.json(req.user);
 })
-router.post('/home/checkPassword',authCheck,(req,res)=>{
+router.post('/home/checkPassword',(req,res)=>{
     const pwd=req.body.value;
     checkPassword(req.user.password,pwd,function(isMatch){
         console.log(isMatch);
@@ -37,7 +31,7 @@ router.post('/home/checkPassword',authCheck,(req,res)=>{
     });
 });
 
-router.post('/updPic',authCheck,(req,res)=>{
+router.post('/updPic',(req,res)=>{
     upload(req, res, (err) => {
         if(err){
           console.log(err);
@@ -55,7 +49,7 @@ router.post('/updPic',authCheck,(req,res)=>{
       });
 });
 
-router.post('/home/searchBar',authCheck,(req,res)=>{
+router.post('/home/searchBar',(req,res)=>{
     const query=req.body.value;
     console.log(query);
     if(query === "")
@@ -68,7 +62,7 @@ router.post('/home/searchBar',authCheck,(req,res)=>{
     })
 }
 });
-router.post('/home/updateTask',authCheck,(req,res)=>{
+router.post('/home/updateTask',(req,res)=>{
     const {name,status,priority,targetDate,label}=req.body;
     var id=req.query.id;
     console.log(id);
@@ -86,7 +80,7 @@ router.post('/home/updateTask',authCheck,(req,res)=>{
         })
     })
 })
-router.post('/home/deleteTask',authCheck,(req,res)=>{
+router.post('/home/deleteTask',(req,res)=>{
     id=req.body.value;
     Task.findByIdAndDelete({_id:id}).then(task=>{
         console.log(task);
@@ -94,17 +88,17 @@ router.post('/home/deleteTask',authCheck,(req,res)=>{
     }).catch(err=>console.log(err));
 })
 
-router.post('/home/deleteLabel',authCheck,(req,res)=>{
+router.post('/home/deleteLabel',(req,res)=>{
     id=req.body.value;
     Label.findByIdAndDelete({_id:id}).then(lab=>{
         console.log(lab);
         res.json('');
     }).catch(err=>console.log(err));
 })
-router.get('/home/listLabel',authCheck,(req,res)=>{
+router.get('/home/listLabel',(req,res)=>{
     res.render('label');
 })
-router.post('/home/updateLabel',authCheck,(req,res)=>{
+router.post('/home/updateLabel',(req,res)=>{
     const name=req.body.value;
     const id=req.body.id;
     Label.findById({_id:id}).then(lab=>{
@@ -117,7 +111,7 @@ router.post('/home/updateLabel',authCheck,(req,res)=>{
 router.get('/home/listTask',authCheck,(req,res)=>{
     res.render('alltasks');
 })
-router.post('/home/checkEmail',authCheck,(req,res)=>{
+router.post('/home/checkEmail',(req,res)=>{
     const email=req.body.value;
     User.find({email}).then(user=>{
         console.log(user);
@@ -125,7 +119,7 @@ router.post('/home/checkEmail',authCheck,(req,res)=>{
     }).catch(err => console.log(err));
 });
 
-router.post('/home/changePassword',authCheck,(req,res)=>{
+router.post('/home/changePassword',(req,res)=>{
     const pwd=req.body.value;
     console.log(pwd);
     console.log(req.user.password);
@@ -134,19 +128,19 @@ router.post('/home/changePassword',authCheck,(req,res)=>{
     console.log(req.user.password);
     res.json(req.user.password);
 })
-router.get('/home/info',authCheck,(req,res)=>{
+router.get('/home/info',(req,res)=>{
     res.render('info',{
         user:req.user
     });
 });
-router.get('/home/search',authCheck,(req,res)=>{
+router.get('/home/search',(req,res)=>{
     res.render('seachPage');
 });
-router.get('/home/labels',authCheck,(req,res)=>{
+router.get('/home/labels',(req,res)=>{
     res.render('label');
 });
 
-router.post('/home/listTask',authCheck,(req,res)=>{
+router.post('/home/listTask',(req,res)=>{
     var p=req.body.priority;
     var s=req.body.status;
     console.log(p);
@@ -181,15 +175,15 @@ router.post('/home/listTask',authCheck,(req,res)=>{
         }   
     }
 })
-router.post('/home/listLabel',authCheck,(req,res)=>{
+router.post('/home/listLabel',(req,res)=>{
     Label.find({}).then(label=>{
         res.json(label);
     })
 });
-router.get('/home/tasks',authCheck,(req,res)=>{
+router.get('/home/tasks',(req,res)=>{
     res.render('alltasks');
 });
-router.post('/home/addLabel',authCheck,(req,res)=>{
+router.post('/home/addLabel',(req,res)=>{
     var data=req.body;
     console.log(req.body);
     newLabel= new Label({
@@ -202,10 +196,10 @@ router.post('/home/addLabel',authCheck,(req,res)=>{
     
 })
 
-router.get('/home/createTask',authCheck,(req,res)=>{
+router.get('/home/createTask',(req,res)=>{
     res.render('createTask');
 });
-router.post('/home/createTask',authCheck,(req,res)=>{
+router.post('/home/createTask',(req,res)=>{
     const {taskName,priority,label,datetime}=req.body;
     var d=new Date(datetime);
     var p=Date.parse(d);

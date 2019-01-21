@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Change Pasword</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+$(document).ready(function(){
+                $.ajax({
+                    type: "POST",
+                    url: "/home/getUser",
+                    data: JSON.stringify({ value: '' }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        var val=response.img;
+                       
+                        if(val != undefined)
+                            $('#profile').attr('src','/uploads/'+val);
+                        else
+                           $('#profile').attr('src','/images/profile.jpg');
+                    },
+                    error: function (xhr, status) {
+                        alert('Sorry, there was a problem!');
+                    }
+
+            });
+        });
+</script>
+</head>
+<% include ./partials/sidebar %>
+<div class="content">
+    <% include ./partials/header %>
+</div>
+<div class="container">
+
+    <div class="col-sm-3">
+    </div>
+    <div class="col-sm-6" style="background-color:#fff;border:5px solid rgba(0,0,0,0.1);margin-top:40px">
+        <br />
+
+        <div class="alert alert-dismissible" style="border:1px solid #E2E5E1" id="alert-div-avilability">
+            <center>
+                <label id="avilability"></label>
+                <div id="errors"></div>
+            </center>
+        </div>
+
+        <h1>Profile</h1>
+        <div class="d-flex">
+            
+                <form class="image-container" method="post" action="/updPic" enctype="multipart/form-data" id="profilepicform">
+                    <img  id="profile" style="width: 150px; height: 150px" class="img-thumbnail allSidesSoft" />
+                    <div class="middle">
+                        <input id="file"  name="image" type="file" />
+                        <br>
+                        <input type="submit" value="Update Profile Pic" id="upload" class="btn btn-success">
+                    </div>
+                </form>
+                
+            </div>
+            <br>
+        <form class="form-horizontal" id="form">
+            <div class="col-sm-12">
+                    
+                <div class="form-group">
+                    <input type="email" disabled="" name="email" class="form-control" id="email" value="<%=user.email%>"><br />
+                </div>
+                <div class="form-group">
+                    <input type="password" required="" name="password1" class="form-control" id="oldpwd" placeholder="Current Password"
+                        autocomplete="off"><br />
+                </div>
+                <div class="form-group">
+                    <input type="password" required="" name="password2" min="6" class="form-control" id="newpwd"
+                        placeholder="New Password" autocomplete="off"><br />
+                </div>
+
+            </div>
+
+        </form>
+        <div class="form-group">
+            <input type="submit" value="Update" id="update" class="btn btn-success">
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    //    $(document).ready(function () {
+    function checkPassword(pwd) {
+        $.ajax({
+            type: "POST",
+            url: "/home/checkPassword",
+            data: JSON.stringify({ value: pwd }),
+            contentType: 'application/json',
+            success: function (response) {
+
+                var code = "";
+                var err = document.getElementById("errors");
+                err.innerHTML = "";
+                if (!response) {
+                    code += "<div class=\"alert alert-warning\"><strong>Warning!</strong> Current Password Incorret</div>";
+                    $("#errors").html(code);
+                    $("#update").unbind();
+                }
+                else {
+                    $("#update").on("click", changePassword);
+                }
+            },
+            error: function (xhr, status) {
+                alert(status);
+            },
+
+        });
+    }
+    function changePassword() {
+        var pwd = $('#newpwd').val();
+        var oldpwd = $('#oldpwd').val();
+
+        $.ajax({
+            type: "POST",
+            url: "/home/changePassword",
+            data: JSON.stringify({ value: pwd }),
+            contentType: 'application/json',
+            success: function (response) {
+                window.location.reload();
+                var code = "";
+                var err = document.getElementById("errors");
+                err.innerHTML = "";
+                code += "<div class=\"alert alert-success\"><strong>Congo!</strong> Password Changed</div>";
+                $("#errors").html(code);
+            },
+            error: function (xhr, status) {
+                alert(status);
+            }
+
+        });
+    }
+    $('#oldpwd').keypress(function (e) {
+        var key = e.which;
+        var pwd = $('#oldpwd').val();
+        if (key == 13) {
+            checkPassword(pwd);
+        }
+    });
+
+    $('#update').click(changePassword);
+
+   /* $('#upload').click(function(){
+        var val=$('#profile').val();
+        $.ajax({
+            type: "POST",
+            url: "/updPic",
+            data: JSON.stringify({ value: val }),
+            contentType: "multipart/form-data",
+            success: function (response) {
+
+                alert('done');
+            },
+            error: function (xhr, status) {
+                alert(status);
+            },
+
+        });
+    });*/
+            //});
+</script>
+</body>
+
+</html>

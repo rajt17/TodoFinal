@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>All Tasks</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        function listTasks() {
+            var p = $('#priority').val();
+            var s = $('#status').val();
+            $.ajax({
+                type: "POST",
+                url: "/home/listTask",
+                data: JSON.stringify({ priority: p, status: s }),
+                contentType: 'application/json',
+                success: function (response) {
+                    var res = response;
+                    var code = "";
+                    var table = document.getElementById("table");
+                    table.innerHTML = "";
+                    for (let i = 0; i < res.length; i++) {
+                        var d = (Date.parse(res[i].targetDate));
+                        var p = new Date(d);
+                        var targetDate = p.toUTCString().substring(0, 22);
+                        d = (Date.parse(res[i].creationDate));
+                        p = new Date(d);
+                        var creationDate = p.toUTCString().substring(0, 22);
+                        var finishedDate;
+                        if (res[i].finishedDate != undefined) {
+                            d = (Date.parse(res[i].finishedDate));
+                            p = new Date(d);
+                            finishedDate = p.toUTCString().substring(0, 22);
+                        }
+                        else {
+                            finishedDate = '___________________';
+                        }
+                        code += "<tr>";
+                        code += "<td>" + res[i].name + "</td>";
+                        code += "<td>" + creationDate + "</td>";
+                        code += "<td>" + res[i].status + "</td>";
+                        code += "<td>" + targetDate + "</td>";
+                        code += "<td>" + res[i].priority + "</td>";
+                        code += "<td>" + finishedDate + "</td>";
+                        code += "<td> <button value=" + JSON.stringify(res[i]) + " onclick=\"editButton(this.value)\" type=\"button\"  ";
+                        code += "class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#updateLabel\"><span ";
+                        code += "class=\"glyphicon glyphicon-pencil\"></span></button> ";
+                        code += "<button onclick=\"deleteButton(this.value)\" type=\"button\" value=" + res[i]._id + " ";
+                        code += "class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#deleteLabel\"><span ";
+                        code += "class=\"glyphicon glyphicon-trash\"></span></button></td>";
+                        code += "</tr>"
+                    }
+
+
+                    $("#table").html(code);
+                    $('#myTable').DataTable();
+                },
+                error: function (xhr, status) {
+                    alert('Sorry, there was a problem!');
+                }
+
+            });
+        }
+        $(document).ready(function () {
+            listTasks();
+            $("#priority").on('change', function () {
+                listTasks();
+            });
+            $("#status").on('change', function () {
+                listTasks();
+            });
+            $('#delete').click(function()
+        {
+            var id= $('#delete').val();
+            $.ajax({
+                type: "POST",
+                url: "/home/deleteTask",
+                data: JSON.stringify({ value: id }),
+                contentType: 'application/json',
+                success: function (response) {
+
+                    listTasks();
+                },
+                error: function (xhr, status) {
+                    alert('Sorry, there was a problem!');
+                }
+
+            });
+        });
+
+        });
+        function editButton(val) {
+            const obj = JSON.parse(val);
+            $("#task").val(obj.name);
+            $("#label").val(obj.label);
+            $("#priority").val(obj.priority);
+            $("#targetDate").val(obj.targetDate);
+            $("#statuss").val(obj.status);
+            document.getElementById("update").action = "/home/updateTask?id=" + obj._id;
+        }
+        function deleteButton(valu)
+        {
+            $("#delete").val(valu);
+            var b=$("#delete").val();
+           
+        }
+        
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/listLabel",
+                data: JSON.stringify({ value: 'val' }),
+                contentType: 'application/json',
+                success: function (response) {
+                    var res = response;
+                    var code = "";
+                    var options = document.getElementById("options");
+                    options.innerHTML = "";
+                    for (let i = 0; i < res.length; i++) {
+                        code += "<option>" + res[i].name + "</option>";
+                    }
+
+                    $("#options").html(code);
+                },
+                error: function (xhr, status) {
+                    alert('Sorry, there was a problem!');
+                }
+
+            });
+        });
+        $(document).ready(function () {
+            var date = Date.now();
+            date = new Date(date);
+            var d = date.toISOString().substring(0, 19);
+            $("#targetDate").attr("min", d);
+        });
+    </script>
+    <style>
+        table,
+            td,
+            th {
+                border: 1px solid #ddd;
+                text-align: left;
+            }
+    
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+    
+            th,
+            td {
+                padding: 15px;
+            }
+        </style>
+</head>
+<% include ./partials/sidebar %>
+<div class="content">
+    <% include ./partials/header %>
+</div>
+<div class="container" style="padding:0; width:80%;padding-right:10px; padding-top:50px;">
+    <div class="panel panel-default">
+        <div class="form-group">
+            <label>Priority</label><br />
+            <select id="priority" data-style="btn-info" name="status" class="form-control">
+                <optgroup label="On The Basis Of">
+                    <option value="All">All</option>
+                    <option value="P1">P1</option>
+                    <option value="P2">P2</option>
+                    <option value="P3">P3</option>
+                    <option value="P4">P4</option>
+                </optgroup>
+            </select>
+            <br>
+            <label>Status</label><br>
+            <select id="status" data-style="btn-info" name="Status" class="form-control">
+                <optgroup label="On The Basis Of">
+                    <option value="All">All</option>
+                    <option value="Initial">Initial</option>
+                    <option value="In progress">Pending</option>
+                    <option value="Complete">Completed</option>
+                </optgroup>
+            </select>
+        </div>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading clearfix">
+            <center>
+                <h4 class="panel-title" style="padding-top: 7.5px;">Tasks</h4>
+            </center>
+        </div>
+        <div id="content" class="container" style=>
+            <div style="width:75%">
+                <table class="table" id="myTable" style="margin-right:0px;">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th>Target Date</th>
+                            <th>Priority</th>
+                            <th>Finished Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="updateLabel" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id="heading"></h4>
+            </div>
+            <div class="modal-body">
+
+                <form method="post" class="form-horizontal" method="post" id="update">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label>Task</label><br />
+                            <input type="text" name="name" class="form-control" id="task" autocomplete="off"></input><br />
+                        </div>
+                        <div class="form-group">
+                                <select data-style="btn-info" id="status" name="status" class="form-control">
+                                        <optgroup label="Select Status">
+                                            <option>Initial</option>
+                                            <option>Pending</option>
+                                            <option>Completed</option>
+                                        </optgroup>
+                                    </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Target Date-Time</label>
+                            <input type="datetime-local" required="" name="targetDate" class="form-control" id="targetDate"><br />
+                        </div>
+                        <div class="form-group">
+                            <label>Select Any Other Priority:</label><br />
+                            <select data-style="btn-info" id="priority" name="priority" class="form-control">
+                                <optgroup label="Select Priority">
+                                    <option>P1</option>
+                                    <option>P2</option>
+                                    <option>P3</option>
+                                    <option>P4</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label>Label:</label><br />
+                            <select data-style="btn-info" name="label" class="form-control">
+                                <optgroup label="Select Label" id="options">
+
+                                </optgroup>
+                            </select>
+                        </div>
+                        <input type="submit" value="Update" class="btn btn-success">
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<!--Delete Modal-->
+<div class="modal fade" id="deleteLabel" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete</h4>
+            </div>
+            <div class="modal-body">
+                <p>You Sure! You Wanna Delete This Label</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal"><a href="#">Close</a></button>
+                <button type="button" id="delete" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

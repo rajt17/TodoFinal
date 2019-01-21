@@ -1,0 +1,38 @@
+<div class="panel panel-primary" style="padding-bottom:5px;  padding-top:5px; background-color: steelblue">
+    <div class="row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-2">
+            <h2>ToDo</h2>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2">
+            <a href="/home/info"> <img style="float:right; width:40%; height:30%; border-radius: 60px" id="profilepic" alt="profile"></div></a>
+        <div class="col-sm-1"></div>
+    </div>
+    <div>
+        <div class="col-sm-1"></div>
+        <a href="/home/search" ><button id="search" type="button" class="btn btn-primary"><span class="glyphicon glyphicon-search"></span></button></a> 
+    </div>
+    <script>
+        $(document).ready(function(){
+                $.ajax({
+                    type: "POST",
+                    url: "/home/getUser",
+                    data: JSON.stringify({ value: '' }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        var val=response.img;
+                        
+                        if(val != undefined)
+                            $('#profilepic').attr('src','/uploads/'+val);
+                        else
+                           $('#profilepic').attr('src','/images/profile.jpg');
+                    },
+                    error: function (xhr, status) {
+                        alert('Sorry, there was a problem!');
+                    }
+
+            });
+        });
+    </script>

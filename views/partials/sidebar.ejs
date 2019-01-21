@@ -1,0 +1,108 @@
+<style>
+  a:link {
+  color:white; 
+  text-decoration: none;
+}
+
+a:visited {
+  color:white;
+  
+  text-decoration: none;
+}
+
+a:hover {
+  color:white;
+  
+  text-decoration: none;
+}
+
+a:active {
+  color:white;
+  
+  text-decoration: none;
+}
+    body {
+      margin: 0;
+      font-family: "Lato", sans-serif;
+    }
+    
+    .sidebar {
+      margin: 0;
+      padding: 0;
+      width: 200px;
+      background-color: #f1f1f1;
+      position: fixed;
+      height: 100%;
+      overflow: auto;
+    }
+    
+    .sidebar a {
+      display: block;
+      color: black;
+      padding: 16px;
+      text-decoration: none;
+    }
+     
+    .sidebar a.active {
+      background-color: steelblue;
+      color: white;
+    }
+    
+    .sidebar a:hover:not(.active) {
+      background-color: #555;
+      color: white;
+    }
+    
+    div.content {
+      margin-left: 200px;
+      padding: 1px 16px;
+      height: 1000px;
+    }
+    
+    @media screen and (max-width: 700px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .sidebar a {float: left;}
+      div.content {margin-left: 0;}
+    }
+    
+    @media screen and (max-width: 400px) {
+      .sidebar a {
+        text-align: center;
+        float: none;
+      }
+    }
+    
+    </style>
+    </head>
+    <body>
+
+    <div class="sidebar">
+      <a class="active" href="/home/tasks">All tasks</a> 
+      <a href="/home/createTask">Create Tasks</a>
+      <a href="/home/info">Profile</a>
+      <a href="/home/labels">Labels</a>
+      <a href="#" data-toggle="modal" data-target="#myModal">Logout</a>
+    </div>
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-md">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Logout</h4>
+            </div>
+            <div class="modal-body">
+              <p>You Sure! You Wanna Logout</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-dismiss="modal"><a href="#">Close</a></button>
+              <button type="button" class="btn btn-danger" ><a href="/home/logout" >Logout</a></button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    

@@ -1,0 +1,14 @@
+module.exports={
+    google:{
+        CLIENT_ID:'279355871407-9v0915t5gdqcuj9idbk7e4f6c4je56me.apps.googleusercontent.com',
+        CLIENT_SECRET:'LWEgkW20ePTRqMv-PJEVFRTi'
+    },
+    fb:{
+        CLIENT_ID:'1974427136008569',
+        CLIENT_SECRET:'f59b86d08de5855c2b8a3ed0698e99d9'
+    },
+    git:{
+        CLIENT_ID:'e2736eb0dd0dd5719e81',
+        CLIENT_SECRET:'b6ace661d1d1eedcc297fe358fe186b4d8e07984'
+    }
+}

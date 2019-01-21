@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>SignUp</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+      $(document).ready(function () {
+
+$('#searchInp').keyup(function (e) {
+    var word = $('#searchInp').val();
+    $.ajax({
+        type: "POST",
+        url: "/home/searchBar",
+        data: JSON.stringify({ value: word }),
+        contentType: 'application/json',
+        success: function (response) {
+            var res = response;
+            var code = "";
+            var table = document.getElementById("table");
+            table.innerHTML="";
+            for (let i = 0; i < res.length; i++) {
+                code += "<tr onclick=\"fetchTask("+JSON.stringify(res[i])+")\">";
+                code += "<td>" + res[i].name + "</td>";
+                code +=  "</tr>";
+            }
+            $("#table").html(code);
+        },
+        error: function (xhr, status) {
+            alert('Sorry, there was a problem!');
+        }
+
+    });
+});
+
+});
+
+  </script>
+  <style>
+      table, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+
+}
+  </style>
+  </head>
+<% include ./partials/sidebar %>
+<div class="content">
+    <% include ./partials/header %>
+              </div>
+<div class="container">
+        <input id="searchInp" type="text" style=" width: 70%;padding: 2px 2px;margin: 8px 0;box-sizing: border-box;border: none;border-bottom: 2px solid steelblue;" placeholder="Find">
+        <table class="table" id="myTable" style="width:70%" >
+                <tbody id="table">
+                </tbody>
+            </table>
+    </div>

@@ -18,26 +18,26 @@
                             </div>
                             <div class="form-group">
                                     <label>Change Status</label>
-                                    <select data-style="btn-info" id="status" name="status" class="form-control">
+                                    <select data-style="btn-info" id="modalstatus" name="status" class="form-control">
                                             <optgroup label="Select Status">
-                                                <option>Initial</option>
-                                                <option>Pending</option>
-                                                <option>Completed</option>
+                                                <option value="Initial">Initial</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Completed">Completed</option>
                                             </optgroup>
                                         </select>
                             </div>
                             <div class="form-group">
                                 <label>Target Date-Time</label>
-                                <input type="datetime-local" required="" name="targetDate" class="form-control" id="targetDate">
+                                <input type="datetime-local" name="targetDate" class="form-control" id="targetDate">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="pri">
                                 <label>Select Any Other Priority:</label>
-                                <select data-style="btn-info" id="priority" name="priority" class="form-control">
+                                <select data-style="btn-info" id="modalpriority" name="priority" class="form-control">
                                     <optgroup label="Select Priority">
-                                        <option>P1</option>
-                                        <option>P2</option>
-                                        <option>P3</option>
-                                        <option>P4</option>
+                                        <option value="P1">P1</option>
+                                        <option value="P2">P2</option>
+                                        <option value="P3">P3</option>
+                                        <option value="P4">P4</option>
                                     </optgroup>
                                 </select>
                             </div>

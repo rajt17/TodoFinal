@@ -107,8 +107,8 @@
         function editButton(val) {
             const obj = JSON.parse(val);
             $("#task").val(obj.name);
-           
-            $("#priority").val(obj.priority);
+            $('#modalpriority option[value='+obj.priority+']').prop('selected', 'selected');
+            $('#modalstatus option[value='+obj.status+']').prop('selected', 'selected');
             $("#targetDate").val(obj.targetDate);
             $("#statuss").val(obj.status);
             $("#addedLabel").val(obj.label);

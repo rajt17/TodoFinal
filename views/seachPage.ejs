@@ -73,10 +73,11 @@
             var val = $(this).attr('id');
             const obj = JSON.parse(val);
             $("#task").val(obj.name);
-            $("#addedLabel").val(obj.label);
-            $("#priority").val(obj.priority);
+            $('#modalpriority option[value='+obj.priority+']').prop('selected', 'selected');
+            $('#modalstatus option[value='+obj.status+']').prop('selected', 'selected');
             $("#targetDate").val(obj.targetDate);
             $("#statuss").val(obj.status);
+            $("#addedLabel").val(obj.label);
             document.getElementById("update").action = "/home/updateTask?id=" + obj._id;
             $('#updateLabel').modal('show');
 

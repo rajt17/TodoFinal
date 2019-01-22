@@ -62,24 +62,26 @@ router.post('/home/searchBar', (req, res) => {
     }
 });
 router.post('/home/updateTask', (req, res) => {
-    const { name, status, priority, targetDate, label } = req.body;
+    const { name, status, priority, label } = req.body;
     var id = req.query.id;
-    console.log(id);
-    var d = new Date(targetDate);
-    var p = Date.parse(d);
+    var targetDate=req.body.targetDate;
     var finishedDate;
     if (status === 'Completed')
     {
         finishedDate=Date.now();
     }
     Task.findById({ _id: id }).then(task => {
+        if(targetDate != '')
+        {
+            var d = new Date(targetDate);
+            var p = Date.parse(d);
+            task.targetDate=p;
+        }
         task.name = name,
         task.status = status,
         task.priority = priority,
-        task.targetDate = p,
         task.finishedDate=finishedDate
-       
-        require('../config/savetask')(task,label,()=>{
+        require('../config/savetask')(task,label,req.user,()=>{
             res.redirect('/home/listTask');
         })
     })
@@ -213,8 +215,7 @@ router.post('/home/createTask', (req, res) => {
         targetDate: p,
         owner: req.user._id
     })
-    require('../config/savetask')(newTask,labels,()=>{
-        req.user.Tasks.push({ id: task._id })
+    require('../config/savetask')(newTask,labels,req.user,()=>{
         res.redirect('/home/createTask');       
     })
        

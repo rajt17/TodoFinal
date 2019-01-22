@@ -6,20 +6,9 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const User = require('../model/schema');
 const keys = require('./keys');
-const download = require('image-downloader')
+const download = require('image-downloader');
 
-const options = {
-    url: 'http://someurl.com/image.jpg',
-    dest: '/path/to/dest'                  // Save to /path/to/dest/image.jpg
-}
 
-download.image(options)
-    .then(({ filename, image }) => {
-        console.log('File saved to', filename)
-    })
-    .catch((err) => {
-        console.error(err)
-    })
 
 
 passport.serializeUser((user, done) => {
@@ -76,6 +65,7 @@ module.exports = {
                             img: profile.id + '.jpg'
                         }).save().then((newUser) => {
                             console.log('created new user: ', newUser);
+                            
                             const options = {
                                 url: profile._json.avatar_url,
                                 dest: 'C:\\Users\\acer\\Desktop\\TodoFinal\\public\\uploads\\' + newUser.img

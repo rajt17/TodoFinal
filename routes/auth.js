@@ -67,6 +67,7 @@ router.post('/home/updateTask', (req, res) => {
     console.log(id);
     var d = new Date(targetDate);
     var p = Date.parse(d);
+    var finishedDate;
     if (status === 'Completed')
     {
         finishedDate=Date.now();

@@ -57,7 +57,8 @@ module.exports = {
             new GithubStrategy({
                 clientID: keys.git.CLIENT_ID,
                 clientSecret: keys.git.CLIENT_SECRET,
-                callbackURL: '/auth/github/callback'
+                callbackURL: '/auth/github/callback',
+                profileFields: ['id', 'displayName', 'photos', 'user:email']
             }, (accessToken, refreshToken, profile, done) => {
                 //  process.nextTick(function() {
 
@@ -67,7 +68,7 @@ module.exports = {
                         console.log('user is: ', currentUser);
                         done(null, currentUser);
                     } else {
-
+                        
                         new User({
                             githubId: profile.id,
                             username: profile.displayName,
@@ -97,7 +98,8 @@ module.exports = {
             new FacebookStrategy({
                 clientID: keys.fb.CLIENT_ID,
                 clientSecret: keys.fb.CLIENT_SECRET,
-                callbackURL: '/auth/facebook/callback'
+                callbackURL: '/auth/facebook/callback',
+                profileFields: ['id', 'displayName', 'photos', 'email']
             }, (accessToken, refreshToken, profile, done) => {
 
                 User.findOne({ facebookId: profile.id }).then((currentUser) => {
@@ -105,6 +107,7 @@ module.exports = {
                         console.log('user is: ', currentUser);
                         done(null, currentUser);
                     } else {
+                        
                         new User({
                             facebookId: profile.id,
                             username: profile.displayName,
@@ -134,7 +137,8 @@ module.exports = {
             new GoogleStrategy({
                 clientID: keys.google.CLIENT_ID,
                 clientSecret: keys.google.CLIENT_SECRET,
-                callbackURL: '/auth/google/callback'
+                callbackURL: '/auth/google/callback',
+                profileFields: ['id', 'displayName', 'photos', 'email']
             }, (accessToken, refreshToken, profile, done) => {
 
                 User.findOne({ googleId: profile.id }).then((currentUser) => {
@@ -143,6 +147,8 @@ module.exports = {
                         console.log('user is: ', currentUser);
                         done(null, currentUser);
                     } else {
+                        console.log(profile.emails);
+                        console.log(profile.email);
                         new User({
                             googleId: profile.id,
                             username: profile.displayName,

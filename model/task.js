@@ -8,16 +8,16 @@ const userSchema = new Schema({
         defalut:Date.now()
     },
     targetDate:Date,
-    finshedDate:Date,
+    finishedDate:Date,
     status:{
         type:String,
         default:'Initial'
     },
     priority:String,
     owner:String,
-    label:String
+    label:[String]
 });
 
-const Task = mongoose.model('taskLog', userSchema);
+const Task = mongoose.model('taskLog3', userSchema);
 
 module.exports = Task;

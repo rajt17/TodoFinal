@@ -13,6 +13,6 @@ const userSchema = new Schema({
     Tasks:[{id:mongoose.Schema.Types.ObjectId}],
 });
 
-const User = mongoose.model('Log3', userSchema);
+const User = mongoose.model('Log4', userSchema);
 
 module.exports = User;

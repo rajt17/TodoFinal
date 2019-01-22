@@ -16,6 +16,7 @@
         function listTasks() {
             var p = $('#priority').val();
             var s = $('#status').val();
+            var l=  $('#labi').val();
             $.ajax({
                 type: "POST",
                 url: "/home/listTask",
@@ -27,6 +28,8 @@
                     var table = document.getElementById("table");
                     table.innerHTML = "";
                     for (let i = 0; i < res.length; i++) {
+                        if(l === ('All') || res[i].label.includes(l))
+                        {
                         var d = (Date.parse(res[i].targetDate));
                         var p = new Date(d);
                         var targetDate = p.toUTCString().substring(0, 22);
@@ -56,9 +59,10 @@
                         code += "class=\"btn btn-primary\" data-toggle=\"modal\" data-target=\"#deleteLabel\"><span ";
                         code += "class=\"glyphicon glyphicon-trash\"></span></button></td>";
                         code += "</tr>"
+                        
                     }
 
-
+                }
                     $("#table").html(code);
                     $('#myTable').DataTable();
                 },
@@ -69,11 +73,15 @@
             });
         }
         $(document).ready(function () {
+            listLabels();
             listTasks();
             $("#priority").on('change', function () {
                 listTasks();
             });
             $("#status").on('change', function () {
+                listTasks();
+            });
+            $("#labi").on('change', function () {
                 listTasks();
             });
             $('#delete').click(function()
@@ -99,10 +107,11 @@
         function editButton(val) {
             const obj = JSON.parse(val);
             $("#task").val(obj.name);
-            $("#label").val(obj.label);
+           
             $("#priority").val(obj.priority);
             $("#targetDate").val(obj.targetDate);
             $("#statuss").val(obj.status);
+            $("#addedLabel").val(obj.label);
             document.getElementById("update").action = "/home/updateTask?id=" + obj._id;
         }
         function deleteButton(valu)
@@ -111,8 +120,8 @@
             var b=$("#delete").val();
            
         }
-        
-        $(document).ready(function () {
+        function listLabels()
+        {
             $.ajax({
                 type: "POST",
                 url: "/home/listLabel",
@@ -121,20 +130,20 @@
                 success: function (response) {
                     var res = response;
                     var code = "";
-                    var options = document.getElementById("options");
-                    options.innerHTML = "";
+                    var options = document.getElementsByClassName("options");
+                    code += "<option value=\"All\">All</option>"
                     for (let i = 0; i < res.length; i++) {
                         code += "<option>" + res[i].name + "</option>";
                     }
 
-                    $("#options").html(code);
+                    $(".options").html(code);
                 },
                 error: function (xhr, status) {
                     alert('Sorry, there was a problem!');
                 }
 
             });
-        });
+        }
         $(document).ready(function () {
             var date = Date.now();
             date = new Date(date);
@@ -184,8 +193,14 @@
                 <optgroup label="On The Basis Of">
                     <option value="All">All</option>
                     <option value="Initial">Initial</option>
-                    <option value="In progress">Pending</option>
-                    <option value="Complete">Completed</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </optgroup>
+            </select><br>
+            <label>Labels</label><br>
+            <select id="labi" data-style="btn-info" name="lab" class="form-control">
+                <optgroup label="Which" class='options' >
+                   <option value="All">All</option>
                 </optgroup>
             </select>
         </div>
@@ -218,89 +233,6 @@
     </div>
 </div>
 </div>
-
-<div class="modal fade" id="updateLabel" role="dialog">
-    <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" id="heading"></h4>
-            </div>
-            <div class="modal-body">
-
-                <form method="post" class="form-horizontal" method="post" id="update">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <label>Task</label><br />
-                            <input type="text" name="name" class="form-control" id="task" autocomplete="off"></input><br />
-                        </div>
-                        <div class="form-group">
-                                <select data-style="btn-info" id="status" name="status" class="form-control">
-                                        <optgroup label="Select Status">
-                                            <option>Initial</option>
-                                            <option>Pending</option>
-                                            <option>Completed</option>
-                                        </optgroup>
-                                    </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Target Date-Time</label>
-                            <input type="datetime-local" required="" name="targetDate" class="form-control" id="targetDate"><br />
-                        </div>
-                        <div class="form-group">
-                            <label>Select Any Other Priority:</label><br />
-                            <select data-style="btn-info" id="priority" name="priority" class="form-control">
-                                <optgroup label="Select Priority">
-                                    <option>P1</option>
-                                    <option>P2</option>
-                                    <option>P3</option>
-                                    <option>P4</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                        <br>
-                        <div class="form-group">
-                            <label>Label:</label><br />
-                            <select data-style="btn-info" name="label" class="form-control">
-                                <optgroup label="Select Label" id="options">
-
-                                </optgroup>
-                            </select>
-                        </div>
-                        <input type="submit" value="Update" class="btn btn-success">
-
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-<!--Delete Modal-->
-<div class="modal fade" id="deleteLabel" role="dialog">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Delete</h4>
-            </div>
-            <div class="modal-body">
-                <p>You Sure! You Wanna Delete This Label</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal"><a href="#">Close</a></button>
-                <button type="button" id="delete" class="btn btn-danger" data-dismiss="modal">Delete</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-</body>
+<% include ./partials/dataModal %>
 
 </html>

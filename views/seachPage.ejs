@@ -1,60 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>SignUp</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script>
-      $(document).ready(function () {
+    <title>SignUp</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "POST",
+                url: "/home/listLabel",
+                data: JSON.stringify({ value: 'val' }),
+                contentType: 'application/json',
+                success: function (response) {
+                    var res = response;
+                    var code = "";
+                    var options = document.getElementsByClassName("options");
+                    options.innerHTML = "";
+                    
+                    for (let i = 0; i < res.length; i++) {
+                        code += "<option>" + res[i].name + "</option>";
+                    }
 
-$('#searchInp').keyup(function (e) {
-    var word = $('#searchInp').val();
-    $.ajax({
-        type: "POST",
-        url: "/home/searchBar",
-        data: JSON.stringify({ value: word }),
-        contentType: 'application/json',
-        success: function (response) {
-            var res = response;
-            var code = "";
-            var table = document.getElementById("table");
-            table.innerHTML="";
-            for (let i = 0; i < res.length; i++) {
-                code += "<tr onclick=\"fetchTask("+JSON.stringify(res[i])+")\">";
-                code += "<td>" + res[i].name + "</td>";
-                code +=  "</tr>";
+                    $(".options").html(code);
+                },
+                error: function (xhr, status) {
+                    alert('Sorry, there was a problem!');
+                }
+
+            });
+            
+        });
+
+        $(document).ready(function () {
+
+            $('#searchInp').keyup(function (e) {
+                var word = $('#searchInp').val();
+                $.ajax({
+                    type: "POST",
+                    url: "/home/searchBar",
+                    data: JSON.stringify({ value: word }),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        var res = response;
+                        var code = "";
+                        var table = document.getElementById("table");
+                        table.innerHTML = "";
+
+                        for (let i = 0; i < res.length; i++) {
+                            let value = res[i];
+                            var id = JSON.stringify(res[i]);
+                            code += "<tr class=\"rows\" id=" + id + ">";
+                            code += "<td>" + res[i].name + "</td>";
+                            code += "</tr>";
+                        }
+                        $("#table").html(code);
+                    },
+                    error: function (xhr, status) {
+                        alert('Sorry, there was a problem!');
+                    }
+
+                });
+            });
+            $(document).on("click", ".rows", function (e) {
+            var date = Date.now();
+            date = new Date(date);
+            var d = date.toISOString().substring(0, 19);
+            $("#targetDate").attr("min", d);
+            var val = $(this).attr('id');
+            const obj = JSON.parse(val);
+            $("#task").val(obj.name);
+            $("#addedLabel").val(obj.label);
+            $("#priority").val(obj.priority);
+            $("#targetDate").val(obj.targetDate);
+            $("#statuss").val(obj.status);
+            document.getElementById("update").action = "/home/updateTask?id=" + obj._id;
+            $('#updateLabel').modal('show');
+
+        });
+            function deleteButton(valu) {
+                $("#delete").val(valu);
+                var b = $("#delete").val();
+
             }
-            $("#table").html(code);
-        },
-        error: function (xhr, status) {
-            alert('Sorry, there was a problem!');
-        }
+        });
 
-    });
-});
-
-});
-
-  </script>
-  <style>
-      table, td {
+    </script>
+    <style>
+        table, td {
   border: 1px solid black;
   border-collapse: collapse;
 
 }
   </style>
-  </head>
+</head>
 <% include ./partials/sidebar %>
 <div class="content">
     <% include ./partials/header %>
-              </div>
+</div>
 <div class="container">
-        <input id="searchInp" type="text" style=" width: 70%;padding: 2px 2px;margin: 8px 0;box-sizing: border-box;border: none;border-bottom: 2px solid steelblue;" placeholder="Find">
-        <table class="table" id="myTable" style="width:70%" >
-                <tbody id="table">
-                </tbody>
-            </table>
-    </div>
+    <input id="searchInp" type="text" style=" width: 70%;padding: 2px 2px;margin: 8px 0;box-sizing: border-box;border: none;border-bottom: 2px solid steelblue;"
+        placeholder="Find">
+    <table class="table" id="myTable" style="width:70%">
+        <tbody id="table">
+        </tbody>
+    </table>
+</div>
+<% include ./partials/dataModal %>
+
+</html>
